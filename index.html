@@ -1,319 +1,55 @@
-<!DOCTYPE html>
- 
-<html lang="en">
-<!--<![endif]-->
+<?php
 
-<head>
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="keywords" content="">
+define('LARAVEL_START', microtime(true));
 
-    <title>Smart IT solutions</title>
+/*
+|--------------------------------------------------------------------------
+| Check If The Application Is Under Maintenance
+|--------------------------------------------------------------------------
+|
+| If the application is in maintenance / demo mode via the "down" command
+| we will load this file so that any pre-rendered content can be shown
+| instead of starting the framework, which could cause an exception.
+|
+*/
 
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+if (file_exists($maintenance = __DIR__.'/core/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
 
-    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="css/stroke.css">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="css/animate.css">
-    <link rel="stylesheet" type="text/css" href="css/prettyPhoto.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader for
+| this application. We just need to utilize it! We'll simply require it
+| into the script here so we don't need to manually load our classes.
+|
+*/
 
-    <link rel="stylesheet" type="text/css" href="js/syntax-highlighter/styles/shCore.css" media="all">
-    <link rel="stylesheet" type="text/css" href="js/syntax-highlighter/styles/shThemeRDark.css" media="all">
+require __DIR__.'/core/vendor/autoload.php';
 
-    <!-- CUSTOM -->
-    <link rel="stylesheet" type="text/css" href="css/custom.css">
+/*
+|--------------------------------------------------------------------------
+| Run The Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming request using
+| the application's HTTP kernel. Then, we will send the response back
+| to this client's browser, allowing them to enjoy our application.
+|
+*/
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+$app = require_once __DIR__.'/core/bootstrap/app.php';
 
-</head>
+$kernel = $app->make(Kernel::class);
 
-<body>
-    <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
 
-    <script>
-        var mybutton = document.getElementById("myBtn");
-        window.onscroll = function() {scrollFunction()};
-        function scrollFunction() {
-            if (document.body.scrollTop > 1000 || document.documentElement.scrollTop > 1000) {
-                mybutton.style.display = "block";
-            } else {
-                mybutton.style.display = "none";
-            }
-        }
-        function topFunction() {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-            document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelector('#mode').addEventListener('click',()=>{
-                document.querySelector('html').classList.toggle('dark');
-            })
-        });
-
-
-    </script>
-
-    <div id="wrapper">
-
-        <div id="mode" >
-            <div class="dark">
-                <svg aria-hidden="true" viewBox="0 0 512 512">
-                    <title>lightmode</title>
-                    <path fill="currentColor" d="M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"></path>
-                </svg>
-            </div>
-            <div class="light">
-                <svg aria-hidden="true" viewBox="0 0 512 512">
-                    <title>darkmode</title>
-                    <path fill="currentColor" d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"></path>
-                </svg>
-            </div>
-        </div>
-
-        <div class="container">
-
-            <section id="top" class="section docs-heading">
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="big-title text-center">
-                            <h1>Smart AI powered by Open AI GPT-3</h1>
-                         </div>
-                        <!-- end title -->
-                    </div>
-                    <!-- end 12 -->
-                </div>
-                <!-- end row -->
-
-                <hr>
-
-            </section>
-            <!-- end section -->
-
-            <div class="row">
-
-                <div class="col-md-3">
-                    <nav class="docs-sidebar" data-spy="affix" data-offset-top="300" data-offset-bottom="200" role="navigation">
-                        <ul class="nav">
-                            <li><a href="#line1">Getting Started</a></li>
-                            <li><a href="#line2">Installation</a></li>
-                            <li><a href="#line3">Token Price and Open AI API token</a></li>
-                          
-                        </ul>
-                    </nav >
-                </div>
-                <div class="col-md-9">
-                    <section class="welcome">
-
-                        <div class="row">
-                            <div class="col-md-12 left-align">
-                               <h2 class="dark-text">Introduction<hr></h2>
-                                <div class="row">
-
-                                    <div class="col-md-12 full">
-                                        <div class="intro1">
-                                            <ul>
-                                                <li><strong>Item Name : </strong>Smart AI powered by Open AI GPT-3</li>
-                                                <li><strong>Item Version : </strong> v 1.0</li>
-                                                <li><strong>Author  : </strong> <a href="https://codecanyon.net/user/shafiqi" target="_blank">Shafiq Mohamed Ismail</a></li>
-                                             </ul>
-                                             <hr>
-                                             <center><h5>Server Requirement</h5></center>
-                                                <ul>
-                                                    <li><strong>PHP Version : </strong> 7.4.0 or higher</li>
-                                                    <li><strong>MySQL Version : </strong> 5.6.0 or higher</li>
-                                                    <li><strong>OpenAI GPT-3 Version : </strong> 1.0.0 or higher</li>
-                                                    <!-- other server requirement for laravel 8 -->
-                                                    <li> <strong>Laravel Version : </strong> 8.0.0 or higher</li>
-                                                    
-                                                </ul>
-                                        </div>
-
-                                        <hr>
-                                          
-                                    </div>
-
-                                </div>
-                                <!-- end row -->
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="line1" class="section">
-
-                        <div class="row">
-                            <div class="col-md-12 left-align">
-                                <h2 class="dark-text">Getting Started <hr></h2>
-                            </div>
-                            <!-- end col -->
-                        </div>
-                        <!-- end row -->
-
-                        <div class="row">
-                            <p><strong>Smart-AI</strong> is a laravel based application which can be used for those who wants to start
-                                copywriting business or provide
-                                AI service to other businesses using <strong>GPT-3 models by Open AI</strong>. With the most popular payment
-                                gateways ie paypal and stripe you can easyly charge your customers using the token system just like the one with
-                                Open AI.<br><br>
-                            </p>
-                            <h4>How Does It Works?</h4>
-                            <p>
-                                The system working principle is very simple, First A customer registers an account
-                                and then login in to the panel, to use the system API or copywriting , one have to buy token in the client area
-                                where 1 token is approximately 4 characters or 0.75 words., the price per each token is set by admin in
-                                the admin panel.
-                                <br>
-                                Now The user can make API calls and use the system to copywrite his business or to provide AI service to other
-                                businesses.
-                                <br>
-                        
-                            </p>
-                            <h4>Application based system</h4>
-                            <p>
-                                To ensure reports are kept and your client can be separeted, we have introduced apps system,
-                                suppose your client have two project, FOODAI and FRIENDSAI, we terms both of this as apps
-                                and report is based on this applications.
-                        
-                            </p>
-                        
-                            <img src="smartai.png" alt="">
-                            <ul>
-                                <li>Built with Laravel 9 &amp; Bootstrap ^5.1.3</li>
-                                <li>Open AI GPT-3 </li>
-                                <li>API Access</li>
-                                <li>Detailed graphical reports</li>
-                                <li>Beautfully Designed UI</li>
-                                <li>Insite Token Calculator</li>
-                                <li>Video Based documentation</li>
-                                <li>AI copywriting based on different category</li>
-                                <li>White label service</li>
-                                <li>Powerfull admin Panel</li>
-                                <li>API documentation is also available in client area</li>
-                                <li>Lifetime Updates Each month</li>
-                                <li>Clean and well organized code</li>
-                                <li>White label solution</li>
-                                <li>24/7 customer support</li>
-                                <li>Admin LTE and Voyager Admin panel</li>
-                            </ul>
-                        
-                        </div>
-                        <!-- end row -->
-
-                    </section>
-                    <!-- end section -->
-
-                    <section id="line2" class="section">
-
-                        <div class="row">
-                            <div class="col-md-12 left-align">
-                                <h2 class="dark-text">How to Install Smart AI <hr></h2>
-                            </div>
-                            <!-- end col -->
-                        </div>
-                        <!-- end row -->
-
-                        <div class="intro2 clearfix">
-                            <p><i class="fa fa-check-circle"></i> You can install our script in both shared and other types of hosting without
-                            any problem</p>
-                        </div>
-
-                        <hr>
-
-                        <h4>Follow Below steps</h4>
-
-                         <ol>
-                            <li>Upload the content of the script files to public_html/ </li>
-                            <li>Unzip the content in your installation directory</li>
-                            <li>Create Database and Mark Database username, password and host</li>
-                            <li>Head to .env file in the script located in core/.env</li>
-                            <li>Change the database details</li>
-                            <li>Update other information of your app eg, APP_NAME</li>
-                            <li>Update stripe and Paypal keys</li>
-                            <li>Head to Phpmyadmin and upload the database file located in assets/database.sql </li>
-                            <li>Your Application is ready</li>
-                            <li>
-                              <b>  admin link: htps://app_url.example/admin <br>
-                                admin password: password <br>
-                                admin email: admin@admin.com
-                                </b>
-                            </li>
-                         </ol>
-
-                        <a href="#" class="btn btn-primary">For support please email us: ujumbe@zepson.co.tz</a> <a href="#" class="btn btn-info">Ask a Question</a>
-                        <hr>
-                        
-
-                    </section>
-                    <!-- end section -->
-
-                    <section id="line3" class="section">
-
-                        <div class="row">
-                            <div class="col-md-12 left-align">
-                                <h2 class="dark-text">Get Open AI API key<hr></h2>
-                            </div>
-                            <!-- end col -->
-                        </div>
-                        <!-- end row -->
-
-                        <h4>How to get Open AI API key</h4>
-
-                        <p>
-                            Head to https://beta.openai.com/login/ and login with your email and password.
-                            Go to Keys section and get/create API key.
-                            <br>
-                            Then head to your application admin area > configuration > API section and update the keys.
-                        </p>
-
-                         
-
-                    </section>
-                
-  
- 
- 
-
-                  
-                   
-                </div>
-                <!-- // end .col -->
-
-            </div>
-            <!-- // end .row -->
-
-        </div>
-        <!-- // end container -->
-
-    </div>
-    <!-- end wrapper -->
-
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/retina.js"></script>
-    <script src="js/jquery.fitvids.js"></script>
-    <script src="js/wow.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-
-    <!-- CUSTOM PLUGINS -->
-    <script src="js/custom.js"></script>
-    <script src="js/main.js"></script>
-
-    <script src="js/syntax-highlighter/scripts/shCore.js"></script>
-    <script src="js/syntax-highlighter/scripts/shBrushXml.js"></script>
-    <script src="js/syntax-highlighter/scripts/shBrushCss.js"></script>
-    <script src="js/syntax-highlighter/scripts/shBrushJScript.js"></script>
-
-</body>
-
-</html>
+$kernel->terminate($request, $response);
